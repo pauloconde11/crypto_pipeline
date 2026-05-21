@@ -1,0 +1,66 @@
+services:
+  db_bpa:
+    container_name: postgres_container_bpa
+    image: postgres:16.13
+    ports:
+      - "5000:5432"
+    environment:
+      POSTGRES_USER: db_user
+      POSTGRES_PASSWORD: db_password
+      POSTGRES_DB: db_bpa
+    volumes:
+      - ./postgres/data:/var/lib/postgresql/data
+      - ./postgres/airflow_init.sql:/docker-entrypoint-initdb.d/airflow_init.sql
+    networks:
+      - my_network
+
+  af_bpa:
+    container_name: airflow_container_bpa
+    image: apache/airflow:3.2.1
+    ports:
+      - "8000:8080"
+    environment:
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://db_user:db_password@db_bpa:5432/db_bpa
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/api_request:/opt/airflow/api_request
+    depends_on:
+      - db_bpa
+    networks:
+      - my_network
+    command: >
+      bash -c "airflow db migrate && airflow standalone"
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    container_name: zookeeper_bpa
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    networks:
+      - my_network
+      
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    container_name: kafka_bpa
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    ports:
+      - "9092:9092"
+    networks:
+      - my_network
+networks:
+  my_network:

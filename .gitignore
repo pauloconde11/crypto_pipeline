@@ -1,0 +1,84 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Virtual Environment
+.venv/
+venv/
+env/
+
+# =========================
+# Environment Variables
+# =========================
+.env
+
+# =========================
+# IDEs
+# =========================
+.vscode/
+.idea/
+
+# =========================
+# Jupyter Notebook
+# =========================
+.ipynb_checkpoints/
+
+# =========================
+# Logs
+# =========================
+*.log
+
+# =========================
+# Airflow
+# =========================
+airflow/logs/
+airflow/airflow.db
+airflow/standalone_admin_password.txt
+
+# =========================
+# PostgreSQL Data
+# =========================
+postgres/data/
+
+# =========================
+# Docker
+# =========================
+*.pid
+
+# =========================
+# macOS / Linux
+# =========================
+.DS_Store
+
+# =========================
+# Testing / Coverage
+# =========================
+.coverage
+htmlcov/
+.pytest_cache/
+
+# =========================
+# Temporary files
+# =========================
+*.tmp
+*.temp
+
+# =========================
+# dbt
+# =========================
+dbt/target/
+dbt/dbt_packages/
+
+# =========================
+# Kafka
+# =========================
+kafka-logs/
+zookeeper-data/
+zookeeper-log/
