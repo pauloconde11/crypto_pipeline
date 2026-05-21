@@ -44,4 +44,3 @@ def fetch_market_data():
 
 market_data = fetch_market_data()
 print(market_data)
-
